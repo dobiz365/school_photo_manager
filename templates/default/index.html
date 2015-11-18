@@ -1,0 +1,59 @@
+{include file="header.html" title=foo}
+
+<div class='navbar'>
+<font color='yellow' >【 {$school_name} 】</font>的照片列表 
+</div>
+<div class='curdir'>当前目录：
+{$path}
+</div>
+<div id='photobox'>
+{if $dir_count > 0}
+{foreach from=$dirs item=dir}
+	<div class='dirclass'>
+	<a href="index.php?pid={$dir['id']}">
+	<img class='image' src='{$templates_path}images/folder.jpg'>
+	</a>
+	<div class='dirtitle'>
+	<a href="index.php?pid={$dir['id']}">{$dir.name}</a>
+	</div>
+	</div>
+{/foreach}
+{/if}
+{if $file_count > 0}
+{foreach from=$files item=file name=foo}
+	<div class='dirclass'>
+	<a href="#" data="{$smarty.foreach.foo.index}" class="image_a">
+	<img src="{$file['prev_img']}" class='image'>
+	</a>
+	<div class='dirtitle'>
+	<a href="#" data="{$smarty.foreach.foo.iteration}" class="image_a">{$file['name']}</a>
+	</div>
+	</div>
+{/foreach}
+{/if}
+{if $dir_count <= 0 and $file_count <= 0}
+<div style="height:50px;font-size:24px;text-align:center;font-weight:bold;padding:30px 0;background:#FFFCEC;">
+这个目录是空的，现在还没有照片呢……
+</div>
+{/if}
+</div>
+<div class='arrow_div' id='arrow_left' onselectstart='return false;'>
+<span class='arrow' onselectstart='return false;'><</span>
+</div>
+<img style='z-index:555;display:none;position:absolute;border:10px solid #999;' id='show_image'/>
+<button class='__close_btn' id='close_image_btn' style="z-index:555;display:none;position:absolute;">&#10005;</button>
+<div class='arrow_div' id='arrow_right' onselectstart='return false;'>
+<span class='arrow' onselectstart='return false;'>></span>
+</div>
+<script src='{$templates_path}/js/jquery.min.js'></script>
+<script src='{$templates_path}/js/index.js'></script>
+<script>
+var image_index=0;
+var image_count={$file_count};
+var images=[
+{foreach from=$files item=file}
+['{$file["src"]}',{$file["width"]},{$file["height"]}],
+{/foreach}
+];
+</script>
+{include file="footer.html"}
