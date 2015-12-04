@@ -22,11 +22,11 @@
 {if $file_count > 0}
 {foreach from=$files item=file name=foo}
 	<div class='dirclass'>
-	<a href="#" data="{$smarty.foreach.foo.index}" class="image_a">
+	<a href="javascript:void(0)" data="{$smarty.foreach.foo.index}" class="image_a">
 	<img src="{$file['prev_img']}" class='image'>
 	</a>
 	<div class='dirtitle'>
-	<a href="#" data="{$smarty.foreach.foo.iteration}" class="image_a">{$file['name']}</a>
+	<a href="javascript:void(0)" data="{$smarty.foreach.foo.iteration}" class="image_a">{$file['name']}</a>
 	</div>
 	</div>
 {/foreach}
