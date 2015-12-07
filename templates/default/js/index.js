@@ -1,6 +1,8 @@
 /*
 2015-11-13 浙江省新昌县城西小学 唐明 MOBI:13858591229
-
+2015-12-7
+	增加对键盘左右方向键和ESC键的处理
+	修复图片显示位置错误
 */
 $(document).ready(init);
 
@@ -10,6 +12,7 @@ var show_image;
 var arrow_left;
 var arrow_right;
 var close_image_btn;
+var show_flag=false;
 
 function init(){
 	mask_div=$('<div class="__mask" id="__mask_div"></div>');
@@ -27,25 +30,47 @@ function init(){
 	$('.image_a').click(set_image);
 	$('#show_image').click(hide_show_image);
 	arrow_left.click(function(){
-		if(image_index>0){
-			image_index--;
-			show_image_func();
-		}else{
-			alert('到头了！');
-		}
+		prve();
 	});
 	
 	arrow_right.click(function(){
-		if(image_index<image_count-1){
+		next();
+	});	
+	close_image_btn.click(function(){
+		hide_show_image();
+	});
+	//绑定键盘事件
+	$(document).bind('keyup',function(e){
+		if(show_flag){
+			if(e.keyCode==39){//right
+				next();
+			}else if(e.keyCode==37){//left
+				prev();
+			}else if(e.keyCode==27){//ese
+				hide_show_image();
+			}
+			//console.log(e);
+			return true;
+		}
+	});
+}
+
+function next(){
+	if(image_index<image_count-1){
 			image_index++;
 			show_image_func();
 		}else{
 			alert('到尾了！');
 		}
-	});	
-	close_image_btn.click(function(){
-		hide_show_image();
-	});
+}
+
+function prev(){
+	if(image_index>0){
+			image_index--;
+			show_image_func();
+		}else{
+			alert('到头了！');
+		}
 }
 
 //管理ajax登录
@@ -116,11 +141,15 @@ function show_image_func(){
 	mask_div.show();
 	var sw=$(window).width();
 	var sh=$(window).height();
+	var scrolltop=$(document).scrollTop();
+	var scrollleft=$(document).scrollLeft();
 	arrow_left.height(sh);
+	arrow_left.css('top',scrolltop+'px');
 	arrow_left.css('line-height',sh+'px');
 	arrow_right.css('line-height',sh+'px');
 	arrow_right.height(sh);
 	arrow_right.css('left',sw-50+'px');
+	arrow_right.css('top',scrolltop+'px');
 	arrow_left.css('display','block');
 	arrow_right.css('display','block');
 	close_image_btn.css('display','block');
@@ -134,14 +163,16 @@ function show_image_func(){
 	}
 	show_image.attr('width',w-20);
 	show_image.attr('height',h-20);
-	var image_left=(sw-w)/2;
-	var image_top=(sh-h)/2;
+	var image_left=scrollleft+(sw-w)/2;
+	var image_top=scrolltop+(sh-h)/2;
 	show_image.css('left',image_left+'px');
 	show_image.css('top',image_top+'px');
 	close_image_btn.css('top',image_top+10+'px');
 	close_image_btn.css('left',image_left+w-24-10+'px');
 	show_image.attr('src',data[0]);
 	show_image.css('display','block');
+	show_flag=true;
+	
 }
 
 function hide_show_image(){
@@ -150,5 +181,6 @@ function hide_show_image(){
 	arrow_left.hide();
 	arrow_right.hide();
 	close_image_btn.hide();
+	show_flag=false;
 }
 
