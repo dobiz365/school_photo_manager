@@ -40,78 +40,98 @@ function upload_files(){
 */
 
 (function($){
+	var list,idx=0,url,image,canvas,abort_flag=false,file_num;
+	var cover_div,progress,prog_one,prog_all;
 	
-	$.upload_muti=function(file_list,url,opt){
-		this.options={max:1600,allow_ext:['.png','.jpg','.gif'],img_compress:true};
+	canvas=document.createElement('canvas');
+	image=$('<img/>');
+	
+	var options={max:1600,
+				allow_ext:['.png','.jpg','.gif'],
+				img_compress:true};
+	
+
+	var init=function(file_list,m_url,opt){
+		
 		if(opt){
 			for(key in opt){
-				this.options[key]=opt[key];
+				options[key]=opt[key];
 			}
 		}
-		this.abort_flag=false;
-		this.list=this.filter_list(file_list);
-		this.idx=0;
-		this.file_num=this.list.length;
-		this.url=url;
-		this.img=$('<img/>');
-		this.canvas=document.createElement('canvas');
+		
+		list=filter_list(file_list);
+		file_num=list.length;
+		url=m_url;
 	}
-	$.upload_muti.prototype.start=function(){
-		this.init_progress();
-		this.upload_one(this.url,this);
+	
+	var start=function(){
+		if(list.length<=0) return;
+		init_progress();
+		upload_one(url);
 	}
+	
+	$.upload_muti={
+		init:init,
+		start:start
+	};
 	//过滤文件类型
-	$.upload_muti.prototype.filter_list=function (list){
+	var filter_list=function (list){
 		var ret=[];
 		var filename,index1,index2,ext;
 		for(var i=0,len=list.length;i<len;i++){
 			filename=list[i].name;
 			index1=filename.lastIndexOf(".");  
 			index2=filename.length;  
-			ext=filename.substring(index1,index2).toLowerCase();//后缀名小写 
-			if($.inArray(ext,this.options.allow_ext)){
+			ext=filename.substring(index1,index2).toLowerCase().trim();//后缀名小写 
+			var flag=false;
+			for(var j=0;j<options.allow_ext.length;j++){
+				if(ext==options.allow_ext[j]){
+					flag=true;
+					break;
+				}
+			}
+			if(flag){
 				ret[ret.length]=list[i];
 			}
 		}
 		return ret;
 	}
 	
-	$.upload_muti.prototype.upload_one=function (url){
-		var that=this;		
-		if(that.abort_flag) return;
+	var upload_one=function (url){	
+		if(abort_flag) return;
 		
-		this.compress.call(this,this.list[that.idx],this.options.max,function(img_data){
-			if(that.abort_flag) return;
-			that.post.call(that,url,img_data,that.list[that.idx].name,function(ret){
-				if(that.abort_flag) return;
-				that.idx++;
-				if(that.idx<that.file_num) {
-					that.upload_one.call(that,url,that)
+		compress(list[idx],options.max,function(img_data){
+			if(abort_flag) return;
+			post(url,img_data,list[idx].name,function(ret){
+				if(abort_flag) return;
+				idx++;
+				if(idx<file_num) {
+					upload_one(url)
 				}else{
-					that.close_progress.call(that);
-					if(that.options.callback){
-						that.options.callback();
+					close_progress();
+					if(options.callback){
+						options.callback();
 					}
 				}
 			});
-		},this.options.img_compress);
+		},options.img_compress);
 	}
 	
-	$.upload_muti.prototype.abort=function (){
+	var abort=function (){
 		if(confirm('确定要停止上传图片吗？')){
-			this.abort_flag=true;
-			this.close_progress();
+			abort_flag=true;
+			close_progress();
 		}
 	};
 	
 	//压缩图片
-	$.upload_muti.prototype.compress=function (file, max,callback,img_compress){
-	var that=this;
+var compress=function (file, max,callback,img_compress){
     var reader = new FileReader();
-
+	reader.readAsDataURL(file);
+	
     reader.onload = function (e) {
 		if(img_compress){
-			var image = that.img;
+			image.attr('src', e.target.result);
 			image.one('load', function () {
 				if(isNaN(max)) max=1600;
 				var imageWidth=100,imageHeight=100;
@@ -133,8 +153,7 @@ function upload_files(){
 						imageHeight=this.height;
 					  }
 			   }
-				 var canvas = that.canvas;
-
+				 
 				 canvas.width = imageWidth;
 				 canvas.height = imageHeight;
 
@@ -143,21 +162,18 @@ function upload_files(){
 
 				context.drawImage(this, 0, 0, imageWidth, imageHeight);
 				window.URL.revokeObjectURL(this.src); // 释放内存资源
-				var data = canvas.toDataURL('image/jpeg');
+				var data = canvas.toDataURL('image/jpeg');				
 				if(callback) callback(data);
 			 });
-
-			  image.attr('src', e.target.result);
+			  
 		}else{
 			if(callback) callback(e.target.result);
 		}
 		reader=null;
-       };
- 
-     reader.readAsDataURL(file);
+       };     
 	}	
 	//进度条初始化
-	$.upload_muti.prototype.init_progress=function (){
+	var init_progress=function (){
 		var html='<div style="width:600px;position:fixed;z-index:1000;background:#fff;border:1px solid #058;border-radius:5px;box-shadow:3px 3px 8px;">'+
 		'<div style="background:#058;color:#fff;font-weight:bold;font-size:16px;padding:5px 3px;text-align:center;">文件上传进度</div>'+
 		'<table width="100%" cellspacing="0" cellpadding="4" style="font-size:14px;">'+
@@ -173,43 +189,46 @@ function upload_files(){
 		'<hr style="margin:5px;"/>'+
 		'<div style="padding:1px 0 5px 0;text-align:right;"><button style="border:none;background:#f00;color:#fff;padding:5px 20px;cursor:pointer;border-radius:3px;margin-right:10px;" id="__upload_abort_btn">中止上传</button></div>'+
 		'</div>';
-		this.cover_div=$('<div style="position:absolute;z-index:999;background:#000;opacity:0.2;"></div>');
-		this.progress=$(html);
-		this.progress.appendTo('body');
-		this.cover_div.appendTo('body');
-		this.cover_div.css('left','0px');
-		this.cover_div.css('top','0px');
-		this.cover_div.width($(document).width());
-		this.cover_div.height($(document).height());
-		this.progress.css('left',($(window).width()-this.progress.width())/2+'px');
-		this.progress.css('top',($(window).height()-this.progress.height())/2+'px');
-		this.prog_one=$('#__upload_file_progress');
-		this.prog_all=$('#__upload_all_file_progress');
-		$('#__upload_abort_btn').click(this.abort);
+		cover_div=$('<div style="position:absolute;z-index:999;background:#000;opacity:0.2;"></div>');
+		progress=$(html);
+		progress.appendTo('body');
+		cover_div.appendTo('body');
+		cover_div.css('left','0px');
+		cover_div.css('top','0px');
+		cover_div.width($(document).width());
+		cover_div.height($(document).height());
+		progress.css('left',($(window).width()-progress.width())/2+'px');
+		progress.css('top',($(window).height()-progress.height())/2+'px');
+		prog_one=$('#__upload_file_progress');
+		prog_all=$('#__upload_all_file_progress');
+		$('#__upload_abort_btn').click(abort);
 	}
+	
 	//设置进度
-	$.upload_muti.prototype.set_progess=function (p_one,total,cur){
-		this.prog_one.css('width',p_one+'%');
-		this.prog_one.text(p_one+'%');
+	var set_progess=function (p_one,total,cur){
+		prog_one.css('width',p_one+'%');
+		prog_one.text(p_one+'%');
 		var p=Math.round(cur/total*100);
-		this.prog_all.css('width',p+'%');
-		this.prog_all.text('共'+total+'个/当前'+cur+'个');
+		prog_all.css('width',p+'%');
+		prog_all.text('共'+total+'个/当前'+cur+'个');
 	}
+	
 	//关闭进度条
-	$.upload_muti.prototype.close_progress=function (){
-		this.cover_div.remove();
-		this.progress.remove();
+	var close_progress=function (){
+		cover_div.remove();
+		progress.remove();
 	}
+	
 	//上传文件
-	$.upload_muti.prototype.post=function (url,data,filename,callback){
-		var that=this;
+	var post=function (url,data,filename,callback){
 		var temp=data.split(',');
 		var jpg_data=temp[1];
-		if(this.options.post_data){
-			var parm=this.options.post_data;
+		if(options.post_data){
+			var parm=options.post_data;
 		}else{
 			var parm={};
 		}
+		
 		parm.data=jpg_data;
 		parm.filename=filename;
 		$.ajax({
@@ -224,8 +243,8 @@ function upload_files(){
 				console.log(position);
 			    if(evt.lengthComputable){
 					percentComplete = Math.ceil(position*1.0 / total*100);
-					console.log(percentComplete);
-					that.set_progess.call(that,percentComplete,that.file_num,that.idx);
+					//console.log(percentComplete);
+					set_progess(percentComplete,file_num,idx);
 			   }
 			}, false);
 			return xhr;

@@ -207,7 +207,7 @@ class Folder{
 	static function add_img_byid($conn,$parent_id,$name,$src,$prev_img,$size,$width,$height){
 		$name=self::filter_sql($name);
 		$sql="insert into m_file (id,name,size,cdate,prev_img,src,flag,parent_id,width,height) values (null,'{$name}',{$size},now(),'{$prev_img}','{$src}',0,{$parent_id},{$width},{$height})";
-		echo $sql;
+		//echo $sql;
 		//echo $sql;
 		if($conn->exec($sql)>0){
 			return array('code'=>200,'info'=>'添加图片成功！','data'=>'');

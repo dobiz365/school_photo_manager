@@ -137,8 +137,8 @@ function delete_all(){
 function upload_files(){
 	//console.log(this.files);
 	var fileList = this.files;
-	var upload=new $.upload_muti(fileList,'../upload_do.php',{max:2000,callback:upload_close,post_data:{path_id:path_id}});
-	upload.start();
+	$.upload_muti.init(fileList,'../upload_do.php',{max:2000,callback:upload_close,post_data:{path_id:path_id}});
+	$.upload_muti.start();
 }
 
 function upload_close(){
