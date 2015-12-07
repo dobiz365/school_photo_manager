@@ -2,10 +2,14 @@
                        Version 2, June 1991
 
 <<<<<<< HEAD
+<<<<<<< HEAD
  Copyright (C) 1989, 1991 Free Software Foundation, Inc., [http://fsf.org/]
 =======
  Copyright (C) 1989, 1991 Free Software Foundation, Inc., <http://fsf.org/>
 >>>>>>> 62907f9942e9c1decb674dce7474e4e609ad0b9c
+=======
+ Copyright (C) 1989, 1991 Free Software Foundation, Inc., <http://fsf.org/>
+>>>>>>> 1bb524fe916cfa198a7df1977e61024cabacc38b
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
@@ -296,10 +300,14 @@ the "copyright" line and a pointer to where the full notice is found.
 
     {description}
 <<<<<<< HEAD
+<<<<<<< HEAD
     Copyright (C) 2015  李逍m
 =======
     Copyright (C) {year}  {fullname}
 >>>>>>> 62907f9942e9c1decb674dce7474e4e609ad0b9c
+=======
+    Copyright (C) {year}  {fullname}
+>>>>>>> 1bb524fe916cfa198a7df1977e61024cabacc38b
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -345,8 +353,13 @@ proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
 <<<<<<< HEAD
+<<<<<<< HEAD
 Public License instead of this License.
 =======
 Public License instead of this License.
 
 >>>>>>> 62907f9942e9c1decb674dce7474e4e609ad0b9c
+=======
+Public License instead of this License.
+
+>>>>>>> 1bb524fe916cfa198a7df1977e61024cabacc38b

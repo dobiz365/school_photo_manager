@@ -1,0 +1,154 @@
+/*
+2015-11-13 浙江省新昌县城西小学 唐明 MOBI:13858591229
+
+*/
+$(document).ready(init);
+
+var mask_div;
+var dialog_div;
+var show_image;
+var arrow_left;
+var arrow_right;
+var close_image_btn;
+
+function init(){
+	mask_div=$('<div class="__mask" id="__mask_div"></div>');
+	dialog_div=$('<div class="__dialog" id="__dialog_div">'+
+	'<button class="__close_btn" onclick="hide_dialog()">&#10005;</button><div class="__content" id="__content_div"></div>'+
+	'</div>');
+	show_image=$('#show_image');
+	arrow_left=$('#arrow_left');
+	arrow_right=$('#arrow_right');
+	close_image_btn=$('#close_image_btn');
+	var body=$(document.body);
+	body.append(dialog_div);
+	body.append(mask_div);
+	$('#admin_login').click(show_login_dialog);
+	$('.image_a').click(set_image);
+	$('#show_image').click(hide_show_image);
+	arrow_left.click(function(){
+		if(image_index>0){
+			image_index--;
+			show_image_func();
+		}else{
+			alert('到头了！');
+		}
+	});
+	
+	arrow_right.click(function(){
+		if(image_index<image_count-1){
+			image_index++;
+			show_image_func();
+		}else{
+			alert('到尾了！');
+		}
+	});	
+	close_image_btn.click(function(){
+		hide_show_image();
+	});
+}
+
+//管理ajax登录
+function admin_login_ajax(){
+	var admin_name=dialog_div.find('#admin_name').val();
+	var admin_pwd=dialog_div.find('#admin_pwd').val();
+	if(admin_name=='' || admin_pwd==''){
+		alert('请输入用户名或密码！');
+		return;
+	}
+	$.post('admin/ajax_login.php',{admin_name:admin_name,admin_pwd:admin_pwd},function(ret){
+		var d=$.parseJSON(ret);
+		hide_dialog();
+		if(d){
+			if(d.code==200){
+				window.location.href='admin/index.php';
+			}else{
+				alert(d.info);
+			}
+		}
+	}).error(function (){
+		alert('网络不正常，请检查网络！');
+	});
+}
+
+
+function show_login_dialog(){	
+	var login_dialog_html='<ul class="login_ul"><li>用户名：<input type="text" id="admin_name" /></li>'+
+	'<li>密　码：<input type="password" id="admin_pwd" /></li>'+
+	'<li><button onclick="admin_login_ajax()" class="red_button">　登　录　</button></li></ul>';
+	show_dialog(login_dialog_html);
+	$('#admin_name').focus();
+	$('#admin_pwd').on('keyup',function(evt){
+		if(evt.keyCode==13){
+			admin_login_ajax();
+		}
+	});
+}
+
+function hide_dialog(){
+	mask_div.hide();
+	dialog_div.hide();
+}
+
+function show_dialog(html){
+	mask_div.css('width',$(document).width()+'px');
+	mask_div.css('height',$(document).height()+'px');
+	mask_div.show();
+	dialog_div.find('#__content_div').html(html);
+	dialog_div.show();
+	//调整到中央
+	var sw=$(window).width();
+	var sh=$(window).height();
+	dialog_div.css('left',(sw-dialog_div.width())/2);
+	dialog_div.css('top',(sh-dialog_div.height())/2);
+}
+
+
+function set_image(){
+	image_index=$(this).attr('data');
+	//console.log(image_index);
+	show_image_func();
+}
+
+function show_image_func(){
+	mask_div.css('width',$(document).width()+'px');
+	mask_div.css('height',$(document).height()+'px');
+	mask_div.show();
+	var sw=$(window).width();
+	var sh=$(window).height();
+	arrow_left.height(sh);
+	arrow_left.css('line-height',sh+'px');
+	arrow_right.css('line-height',sh+'px');
+	arrow_right.height(sh);
+	arrow_right.css('left',sw-50+'px');
+	arrow_left.css('display','block');
+	arrow_right.css('display','block');
+	close_image_btn.css('display','block');
+	var data=images[image_index];
+	var max_w=sw-120,max_h=sh-10;
+	var w=max_w,
+		h=max_w*1.0/data[1]*data[2];
+	if(h>max_h){
+		h=max_h,
+		w=max_h*1.0/data[2]*data[1]
+	}
+	show_image.attr('width',w-20);
+	show_image.attr('height',h-20);
+	var image_left=(sw-w)/2;
+	var image_top=(sh-h)/2;
+	show_image.css('left',image_left+'px');
+	show_image.css('top',image_top+'px');
+	close_image_btn.css('top',image_top+10+'px');
+	close_image_btn.css('left',image_left+w-24-10+'px');
+	show_image.attr('src',data[0]);
+	show_image.css('display','block');
+}
+
+function hide_show_image(){
+	mask_div.hide();
+	show_image.hide();
+	arrow_left.hide();
+	arrow_right.hide();
+	close_image_btn.hide();
+}
+
