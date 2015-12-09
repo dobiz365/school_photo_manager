@@ -6,8 +6,8 @@
 	$conn->exec("set names utf8");
 	$allow_ext=array('png','jpg','gif','bmp');
 	
-	$pid=0;
-	scan_dir($conn,'C:/inetpub/wwwroot/photo/',$pid,$allow_ext);
+	$pid=1;
+	scan_dir($conn,'D:/photo-data/2014ƒÍ’’∆¨/',$pid,$allow_ext);
 	
 
 	function scan_dir($conn,$path,$pid,$allow_ext){

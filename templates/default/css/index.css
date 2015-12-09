@@ -106,27 +106,30 @@ a{
 	font-size:14px;
 }
 /*遮罩层 */
-.__mask{
+.tm__mask{
 	position:absolute;
 	z-index:554;
-	left:0;
-	top:0;
+	left:0px;
+	top:0px;
 	display:none;
-	width:100%;
-	height:100%;
-	background-color:#000;
-	opacity:0.5;
+	background:#000;
 	filter:alpha(opacity=50);
+	opacity:0.5;
+	
 }
 /*对话框层  */
-.__dialog{
+.tm__dialog{
 	z-index:555;
-	position:fixed;
+	position:absolute;
 	background-color:#fff;
 	border:10px solid #ccc;
 	width:500px;
 	padding:10px;
 	display:none;
+}
+
+.image_div{
+	z-index:555;display:none;position:absolute;border:10px solid #999;
 }
 
 .delete_btn{
@@ -138,7 +141,7 @@ a{
 	cursor:pointer;
 }
 
-.__close_btn{
+.tm__close_btn{
 	background: rgb(243,185,185); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgba(243,185,185,1) 0%, rgba(193,76,59,1) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(243,185,185,1)), color-stop(100%,rgba(193,76,59,1))); /* Chrome,Safari4+ */
@@ -161,7 +164,7 @@ a{
 	font-family:serif;
 }
 
-.__content{
+.tm__content{
 	padding:8px;
 	line-height:150%;
 	text-align:center;

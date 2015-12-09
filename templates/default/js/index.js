@@ -15,19 +15,16 @@ var close_image_btn;
 var show_flag=false;
 
 function init(){
-	mask_div=$('<div class="__mask" id="__mask_div"></div>');
-	dialog_div=$('<div class="__dialog" id="__dialog_div">'+
-	'<button class="__close_btn" onclick="hide_dialog()">&#10005;</button><div class="__content" id="__content_div"></div>'+
-	'</div>');
+	mask_div=$('#tm__mask_div');
+	dialog_div=$('#tm__dialog_div');
 	show_image=$('#show_image');
 	arrow_left=$('#arrow_left');
 	arrow_right=$('#arrow_right');
 	close_image_btn=$('#close_image_btn');
 	var body=$(document.body);
-	body.append(dialog_div);
-	body.append(mask_div);
+	
 	$('#admin_login').click(show_login_dialog);
-	$('.image_a').click(set_image);
+	//$('.image_a').click(set_image);
 	$('#show_image').click(hide_show_image);
 	arrow_left.click(function(){
 		prve();
@@ -119,25 +116,31 @@ function show_dialog(html){
 	mask_div.css('width',$(document).width()+'px');
 	mask_div.css('height',$(document).height()+'px');
 	mask_div.show();
-	dialog_div.find('#__content_div').html(html);
+	dialog_div.find('#tm__content_div').html(html);
 	dialog_div.show();
 	//调整到中央
 	var sw=$(window).width();
 	var sh=$(window).height();
-	dialog_div.css('left',(sw-dialog_div.width())/2);
-	dialog_div.css('top',(sh-dialog_div.height())/2);
+	var scrollx=$(document).scrollLeft();
+	var scrolly=$(document).scrollTop();
+	var x=scrollx+(sw-dialog_div.width())/2;
+	var y=scrolly+(sh-dialog_div.height())/2;
+	//alert(x+','+y);
+	dialog_div.css('left',x+'px');
+	dialog_div.css('top',y+'px');
 }
 
 
-function set_image(){
-	image_index=$(this).attr('data');
-	//console.log(image_index);
+function set_image(idx){
+	image_index=idx;
 	show_image_func();
 }
 
 function show_image_func(){
 	mask_div.css('width',$(document).width()+'px');
 	mask_div.css('height',$(document).height()+'px');
+	mask_div.css('left','0px');
+	mask_div.css('top','0px');
 	mask_div.show();
 	var sw=$(window).width();
 	var sh=$(window).height();
@@ -169,8 +172,9 @@ function show_image_func(){
 	show_image.css('top',image_top+'px');
 	close_image_btn.css('top',image_top+10+'px');
 	close_image_btn.css('left',image_left+w-24-10+'px');
-	show_image.attr('src',data[0]);
 	show_image.css('display','block');
+	var html='<img src="'+data[0]+'" width="'+(w-20)+'px" height="'+(h-20)+'px" style="border:none;" />';
+	show_image.html(html);
 	show_flag=true;
 	
 }

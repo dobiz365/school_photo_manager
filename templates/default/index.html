@@ -22,11 +22,11 @@
 {if $file_count > 0}
 {foreach from=$files item=file name=foo}
 	<div class='dirclass'>
-	<a href="javascript:void(0)" data="{$smarty.foreach.foo.index}" class="image_a">
+	<a href="javascript:set_image({$smarty.foreach.foo.index});" data="{$smarty.foreach.foo.index}" class="image_a">
 	<img src="{$file['prev_img']}" class='image'>
 	</a>
 	<div class='dirtitle'>
-	<a href="javascript:void(0)" data="{$smarty.foreach.foo.iteration}" class="image_a">{$file['name']}</a>
+	<a href="javascript:javascript:set_image({$smarty.foreach.foo.index});" data="{$smarty.foreach.foo.iteration}" class="image_a">{$file['name']}</a>
 	</div>
 	</div>
 {/foreach}
@@ -40,8 +40,14 @@
 <div class='arrow_div' id='arrow_left' onselectstart='return false;'>
 <span class='arrow' onselectstart='return false;'><</span>
 </div>
-<img style='z-index:555;display:none;position:absolute;border:10px solid #999;' id='show_image'/>
-<button class='__close_btn' id='close_image_btn' style="z-index:555;display:none;position:absolute;">&#10005;</button>
+<div class='image_div' id='show_image'> </div>
+
+<div class="tm__mask" id="tm__mask_div"></div>
+<div class="tm__dialog" id="tm__dialog_div">
+	<button class="tm__close_btn" onclick="hide_dialog()">&#10005;</button>
+	<div class="tm__content" id="tm__content_div"></div>
+	</div>
+<button class='tm__close_btn' id='close_image_btn' style="z-index:555;display:none;position:absolute;">&#10005;</button>
 <div class='arrow_div' id='arrow_right' onselectstart='return false;'>
 <span class='arrow' onselectstart='return false;'>></span>
 </div>
